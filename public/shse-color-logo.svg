@@ -1,0 +1,35 @@
+<svg width="145" height="145" viewBox="-10 -5 320 380" xmlns="http://www.w3.org/2000/svg" id="logo-plasma">
+	<filter id="filter" color-interpolation-filters="linearRGB" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse">
+		<feDiffuseLighting surfaceScale="0.0000005" diffuseConstant="3.2" lighting-color="#ffffff" in="SourceGraphic" result="diffuseLighting">
+			<feDistantLight azimuth="270" elevation="20"></feDistantLight>
+		</feDiffuseLighting>
+		<feTurbulence type="fractalNoise" baseFrequency="0.011 0.004" numOctaves="2" seed="3" stitchTiles="noStitch" result="turbulence1"></feTurbulence>
+		<feColorMatrix type="saturate" values="3" in="turbulence1" result="colormatrix"></feColorMatrix>
+		<feColorMatrix type="matrix" values="2 0 0 0 0
+	0 1.5 0 0 0
+	0 0 2 0 0
+	0 0 0 2 0" in="colormatrix" result="colormatrix1"></feColorMatrix>
+		<feBlend mode="multiply" in="diffuseLighting" in2="colormatrix1" result="blend"></feBlend>
+		<feComposite in="blend" in2="SourceAlpha" operator="in" result="composite1"></feComposite>
+		<feFlood flood-color="rgba(255,245,245,0.9)" flood-opacity="1" result="flood1"></feFlood>
+		<feFlood flood-color="rgba(12,8,12,0.5)" flood-opacity="1" result="flood"></feFlood>
+		<feComposite in="flood1" in2="SourceAlpha" operator="out" result="compositeLight"></feComposite>
+		<feComposite in="flood" in2="SourceAlpha" operator="out" result="compositeShadow"></feComposite>
+		<feOffset dx="0" dy="-3" in="compositeShadow" result="offset0"></feOffset>
+		<feOffset dx="0" dy="3" in="compositeLight" result="offset1"></feOffset>
+		<feGaussianBlur stdDeviation="2 2" in="offset0" edgeMode="none" result="blur0"></feGaussianBlur>
+		<feGaussianBlur stdDeviation="1 1" in="offset1" edgeMode="none" result="blur1"></feGaussianBlur>
+		<feComposite in="blur0" in2="SourceAlpha" operator="in" result="compositeShadow"></feComposite>
+		<feComposite in="blur1" in2="SourceAlpha" operator="in" result="compositeLight"></feComposite>
+		<feMerge result="merge">
+			<feMergeNode in="composite1"></feMergeNode>
+			<feMergeNode in="composite1"></feMergeNode>
+			<feMergeNode in="compositeLight"></feMergeNode>
+			<feMergeNode in="compositeShadow"></feMergeNode>
+		</feMerge>
+		<feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="rgba(12,8,12,0.8)" flood-opacity="1"></feDropShadow>
+	</filter>
+	<path filter="url(#filter)" style="opacity:0.4" d="M158.75,4.667L290.156,74.75C296.215,77.981 300,84.289 300,91.156L300,268.844C300,275.711 296.215,282.019 290.156,285.25L158.75,355.333C153.281,358.25 146.719,358.25 141.25,355.333L9.844,285.25C3.785,282.019 0,275.711 0,268.844L-0,91.156C0,84.289 3.785,77.981 9.844,74.75L141.25,4.667C146.719,1.75 153.281,1.75 158.75,4.667ZM50,100L70,110L150,70L230,110L250,100L150,50L50,100ZM50,160L50,200L70,190L150,230L170,220L50,160ZM150,130L130,140L230,190L230,250L150,290L70,250L50,260L150,310L250,260L250,160L230,170L150,130Z" style="fill:rgba(255,140,225,1);"></path>
+	<path filter="url(#filter)" style="opacity:0.4" d="M158.75,4.667L290.156,74.75C296.215,77.981 300,84.289 300,91.156L300,268.844C300,275.711 296.215,282.019 290.156,285.25L158.75,355.333C153.281,358.25 146.719,358.25 141.25,355.333L9.844,285.25C3.785,282.019 0,275.711 0,268.844L-0,91.156C0,84.289 3.785,77.981 9.844,74.75L141.25,4.667C146.719,1.75 153.281,1.75 158.75,4.667ZM50,100L70,110L150,70L230,110L250,100L150,50L50,100ZM50,160L50,200L70,190L150,230L170,220L50,160ZM150,130L130,140L230,190L230,250L150,290L70,250L50,260L150,310L250,260L250,160L230,170L150,130Z" style="fill:rgba(255,140,225,1);"></path>
+    <path filter="url(#filter)" style="opacity:0.4" d="M158.75,4.667L290.156,74.75C296.215,77.981 300,84.289 300,91.156L300,268.844C300,275.711 296.215,282.019 290.156,285.25L158.75,355.333C153.281,358.25 146.719,358.25 141.25,355.333L9.844,285.25C3.785,282.019 0,275.711 0,268.844L-0,91.156C0,84.289 3.785,77.981 9.844,74.75L141.25,4.667C146.719,1.75 153.281,1.75 158.75,4.667ZM50,100L70,110L150,70L230,110L250,100L150,50L50,100ZM50,160L50,200L70,190L150,230L170,220L50,160ZM150,130L130,140L230,190L230,250L150,290L70,250L50,260L150,310L250,260L250,160L230,170L150,130Z" style="fill:rgba(255,140,225,1);"></path>
+</svg>

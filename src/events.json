@@ -1,0 +1,79 @@
+let events = [{
+  id: "event-1",
+  title: "",
+  description: "",
+  location: "",
+  startDate: "Fri Sep 04 2026 00:00:00 GMT+0200 (Central European Summer Time)",
+  endDate: "Sat Sep 05 2026 00:00:00 GMT+0200 (Central European Summer Time)",
+},
+{
+  id: "event-2",
+  title: "",
+  description: "",
+  location: "",
+  startDate: "Thu Sep 03 2026 00:00:00 GMT+0200 (Central European Summer Time)",
+  endDate: "Sun Sep 06 2026 00:00:00 GMT+0200 (Central European Summer Time)",
+},
+{
+  id: "event-3",
+  title: "",
+  description: "",
+  location: "",
+  startDate: "Thu Sep 03 2026 00:00:00 GMT+0200 (Central European Summer Time)",
+  endDate: "Thu Sep 03 2026 00:00:00 GMT+0200 (Central European Summer Time)",
+},
+{
+  id: "event-4",
+  title: "",
+  description: "",
+  location: "",
+  startDate: "Thu Sep 03 2026 00:00:00 GMT+0200 (Central European Summer Time)",
+  endDate: "Mon Sep 21 2026 00:00:00 GMT+0200 (Central European Summer Time)",
+},
+{
+  id: "event-5",
+  title: "",
+  description: "",
+  location: "",
+  startDate: "Mon Sep 21 2026 00:00:00 GMT+0200 (Central European Summer Time)",
+  endDate: "Wed Sep 23 2026 00:00:00 GMT+0200 (Central European Summer Time)",
+},
+{
+  id: "event-6",
+  title: "",
+  description: "",
+  location: "",
+  startDate: "Thu Sep 03 2026 00:00:00 GMT+0200 (Central European Summer Time)",
+  endDate: "Thu Sep 03 2026 00:00:00 GMT+0200 (Central European Summer Time)",
+},
+{
+  id: "event-7",
+  title: "",
+  description: "",
+  location: "",
+  startDate: "Thu Sep 03 2026 00:00:00 GMT+0200 (Central European Summer Time)",
+  endDate: "Thu Sep 03 2026 00:00:00 GMT+0200 (Central European Summer Time)",
+},
+{
+  id: "event-8",
+  title: "",
+  description: "",
+  location: "",
+  startDate: "Thu Sep 03 2026 00:00:00 GMT+0200 (Central European Summer Time)",
+  endDate: "Thu Sep 03 2026 00:00:00 GMT+0200 (Central European Summer Time)",
+},
+{
+  id: "event-9",
+  title: "",
+  description: "",
+  location: "",
+  startDate: "Thu Sep 03 2026 00:00:00 GMT+0200 (Central European Summer Time)",
+  endDate: "Thu Sep 03 2026 00:00:00 GMT+0200 (Central European Summer Time)",
+}]
+let now = new Date();
+
+events.filter((item) => {
+  let start = new Date(item.startDate);
+  let end = new Date(item.endDate);
+  return start.getTime() <= now.getTime() && end.getTime() <= now.getTime();
+});

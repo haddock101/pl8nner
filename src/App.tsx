@@ -1,6 +1,9 @@
+"use client";
+
 import { useState } from "react";
+import { format, lastDayOfMonth, startOfWeek, addDays } from "date-fns";
 import shseLogo from "./assets/shse-alt.svg";
-import Plann8r from "./components/plann8r.tsx";
+import CalendarView from "./components/calendar-view";
 import { ThemeToggleAnimated } from "./components/theme-toggle-animated.tsx";
 import {
   Settings,
@@ -10,7 +13,6 @@ import {
 } from "lucide-react";
 import { Button } from "./components/ui/button";
 import { ButtonGroup } from "./components/ui/button-group";
-import "./App.css";
 import {
   Select,
   SelectContent,
@@ -19,25 +21,63 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./components/ui/select";
+import "./App.css";
+
+// AIzaSyCfPTJZCZeRkIx5BT8K_0dE_6i75ndzMKc
 
 import getEvents from "./api/events.tsx";
+import getMonths from "./api/months.tsx";
+
+
+
+function getWeek(d) {
+  d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() + 4 - (d.getDay() || 7));
+  const yearStart = new Date(d.getFullYear(), 0, 1);
+  const weekNumber = Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
+  return weekNumber;
+}
 
 function App() {
-  const [dummyCalendarEvents] = useState(getEvents());
-  const months = [
-    { label: "January", value: "january" },
-    { label: "February", value: "february" },
-    { label: "March", value: "march" },
-    { label: "April", value: "april" },
-    { label: "May", value: "may" },
-    { label: "June", value: "june" },
-    { label: "July", value: "july" },
-    { label: "August", value: "august" },
-    { label: "September", value: "september" },
-    { label: "October", value: "october" },
-    { label: "November", value: "november" },
-    { label: "December", value: "december" },
-  ];
+  const today = new Date(format(new Date(), "yyyy-MM-01") + "T23:59:00");
+
+  const startOfMonthViewDate = startOfWeek(
+    new Date(today.getFullYear(), today.getMonth(), 1, 1, 1),
+    { weekStartsOn: 1 },
+  );
+
+  const daysArray = [];
+  [...Array(35)].map((_, day) => {
+    daysArray.push(addDays(new Date(startOfMonthViewDate), day));
+  });
+
+  const [selectedDay, setSelectedDay] = useState(0);
+
+  const [selectedDate, setSelectedDate] = useState(daysArray[selectedDay]);
+
+  const goPrevious = () => {
+    alert("goprevious");
+  }
+
+  const goNext = () => {
+    alert("gonext");
+  }
+
+  const goToday = () => {
+    alert("gotoday");
+  }
+
+  const now = new Date();
+  let initialEvents = getEvents();
+  const [calendarEvents, setCalendarEvents] = useState(initialEvents);
+  const [calendarView, setCalendarView] = useState({
+    month: Intl.DateTimeFormat("en", { month: "long" }).format(now),
+    year: Intl.DateTimeFormat("en", { year: "numeric" }).format(now),
+    day: Intl.DateTimeFormat("en", { day: "numeric" }).format(now),
+    week: getWeek(now)
+  });
+  const [activeEventId, setActiveEventId] = useState(calendarEvents[0].id);
+  const [months, setMonths] = useState(getMonths());
 
   return (
     <>
@@ -48,18 +88,18 @@ function App() {
         <div className="flex p-2 items-end justify-end">
           <div className="w-2/3">
             <h2 className="mb-0">
-              <strong>September</strong> 2026
+              <strong>{calendarView.month}</strong> {calendarView.year}{" "}
             </h2>
           </div>
           <div className="w-1/3 flex items-end justify-end">
             <ButtonGroup>
-              <Button variant="ghost" size="lg" className="color-blue-500">
+              <Button variant="ghost" size="lg" className="color-blue-500" onClick={goPrevious}>
                 <ChevronLeft></ChevronLeft>
               </Button>
-              <Button variant="ghost" size="lg" className="color-blue-500">
+              <Button variant="ghost" size="lg" className="color-blue-500" onClick={goToday}>
                 Today
               </Button>
-              <Button variant="ghost" size="lg" className="color-blue-500">
+              <Button variant="ghost" size="lg" className="color-blue-500" onClick={goNext}>
                 <ChevronRight></ChevronRight>
               </Button>
             </ButtonGroup>
@@ -73,13 +113,16 @@ function App() {
               className="w-full justify-between"
             >
               <ButtonGroup>
-                <Button variant="outline" aria-label="2024" size="icon">
+                <Button variant="outline" aria-label="2024" size="icon" onClick={goPrevious}>
                   <ChevronLeft />
                 </Button>
               </ButtonGroup>
               <ButtonGroup>
-                <Button variant="outline">2025</Button>
-                <Select items={months} defaultValue="september">
+                <Button variant="outline">{calendarView.year}</Button>
+                <Select
+                  items={months}
+                  defaultValue={calendarView.month.toLowerCase()}
+                >
                   <SelectTrigger className="w-35">
                     <SelectValue />
                   </SelectTrigger>
@@ -93,17 +136,30 @@ function App() {
                     </SelectGroup>
                   </SelectContent>
                 </Select>
-                <Button variant="outline">24</Button>
-                <Button variant="outline">V39</Button>
+                <Button variant="outline">{calendarView.day}</Button>
+                <Button variant="outline">W{calendarView.week}</Button>
               </ButtonGroup>
               <ButtonGroup>
-                <Button variant="outline" size="icon">
+                <Button variant="outline" size="icon" onClick={goNext}>
                   <ChevronRight />
                 </Button>
               </ButtonGroup>
             </ButtonGroup>
           </div>
-          <Plann8r dummyCalendarEvents={dummyCalendarEvents}></Plann8r>
+
+          <CalendarView
+            calendarEvents={calendarEvents}
+            setCalendarEvents={setCalendarEvents}
+            calendarView={calendarView}
+            setCalendarView={setCalendarView}
+            selectedDay={selectedDay}
+            setSelectedDay={setSelectedDay}
+            selectedDate={selectedDate}
+            setSelectedDate={setSelectedDate}
+            daysArray={daysArray}
+            />
+
+          {/* screenmode and settings nav */}
           <div className="flex items-center justify-center mt-2 mb-20">
             <ButtonGroup>
               <Button>

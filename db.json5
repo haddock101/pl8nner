@@ -1,0 +1,55 @@
+{
+  events: [
+      {
+        id: "event-2",
+        title: "Bandy",
+        description: "Weekly progress update and planning.",
+        location: "Konsum",
+        startDate:  "Fri Sep 04 2026 00:00:00 GMT+0200 (Central European Summer Time)",
+        endDate:    "Fri Sep 16 2026 09:00:00 GMT+0200 (Central European Summer Time)",
+        allDay: false,
+        attendees: ["alice@example.com", "bob@example.com"],
+      },
+      {
+        id: "event-3",
+        title: "Piingis",
+        flair: "maybe",
+        description: "Weekly progress update and planning.",
+        location: "Konsum",
+        startDate:  "Fri Sep 04 2026 00:00:00 GMT+0200 (Central European Summer Time)",
+        endDate:    "Fri Sep 16 2026 09:00:00 GMT+0200 (Central European Summer Time)",
+        allDay: false,
+        attendees: ["alice@example.com", "bob@example.com"],
+      },
+      {
+        id: "event-4",
+        title: "Stryk",
+        flair: "important",
+        description: "Weekly progress update and planning.",
+        location: "Konsum",
+        startDate:  "Fri Sep 04 2026 00:00:00 GMT+0200 (Central European Summer Time)",
+        endDate:    "Sat Sep 05 2026 10:00:00 GMT+0200 (Central European Summer Time)",
+        allDay: false,
+        attendees: ["alice@example.com", "bob@example.com"],
+      },
+      {
+        id: "event-5",
+        title: "h",
+        description: "",
+        location: "",
+        startDate: "2026-09-27T09:00:00Z",
+        endDate: "2026-09-27T10:00:00Z",
+      },
+      {
+        id: "event-6",
+        title: "❤️ Stryk",
+        flair: "today",
+        description: "Weekly progress update and planning.",
+        location: "Konsum",
+        startDate: "2026-09-03T09:00:00Z",
+        endDate: "2026-09-03T10:00:00Z",
+        allDay: false,
+        attendees: ["alice@example.com", "bob@example.com"],
+      }
+    ]
+  }

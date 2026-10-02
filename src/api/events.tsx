@@ -1,5 +1,7 @@
+'use client';
+
 function getEvents() {
-  let dummyData = [
+  const dummyData = [
   /*
       {
         id: "event-0",
@@ -63,6 +65,17 @@ function getEvents() {
         allDay: false,
         attendees: ["alice@example.com", "bob@example.com"],
     },
+    {
+      id: "event-6",
+      title: "❤️ Stryk",
+      flair: "today",
+      description: "Weekly progress update and planning.",
+      location: "Konsum",
+      startDate: "2026-10-03T09:00:00Z",
+      endDate: "2026-10-04T10:00:00Z",
+      allDay: false,
+      attendees: ["alice@example.com", "bob@example.com"],
+    },
       /*
       {
         id: "event-5",
@@ -78,8 +91,8 @@ function getEvents() {
         flair: "today",
         description: "Weekly progress update and planning.",
         location: "Konsum",
-        startDate: "2026-09-03T09:00:00Z",
-        endDate: "2026-09-03T10:00:00Z",
+        startDate: "2026-10-03T09:00:00Z",
+        endDate: "2026-10-03T10:00:00Z",
         allDay: false,
         attendees: ["alice@example.com", "bob@example.com"],
       },

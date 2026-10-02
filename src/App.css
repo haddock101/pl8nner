@@ -663,6 +663,11 @@ div.p8-calendar-row:nth-of-type(6) {
     vertical-align: middle;
 }
 
+.p8-calendar-cell.selected {
+    background-color: rgba(128,128,128,0.1);
+
+}
+
 .p8-calendar-label-background {
     margin: 0 -0.3em;
 }
@@ -764,6 +769,7 @@ div.p8-calendar-row:nth-of-type(6) {
     position: absolute;
     width: calc(100% - 6px);
 }
+
 .date-picker-modal {
     top:150px;
 }

@@ -1,30 +1,30 @@
 // requests.ts
 
-import { CreateSupplierInput, GetSupplierInput, Supplier } from "./types"
+import { CreateEventInput, GetEventInput, Event } from "./types"
 
 
-export const useGetSupplier = () => {
- // adding <Supplier> after useFetch will give the "data" value the type Supplier.
+export const useGetEvent = () => {
+ // adding <Event> after useFetch will give the "data" value the type Event.
  // This really helps to flesh out the quality of life for the API and is part
- // of creating something that is self documenting. We put Supplier because we know
+ // of creating something that is self documenting. We put Event because we know
  // that is what this endpoint will always return.
-  const { commonFetch, isLoading, data } = useFetch<Supplier>({
-    url: "http://myserver.com/api/suppliers/get",
+  const { commonFetch, isLoading, data } = useFetch<Event>({
+    url: "http://localhost:3000/api/Events/get",
   });
 
   // using typescript to define the input here means no mistakes can be
   // made downstream when actually using our API layer
-  const getSupplier = (input: GetSupplierInput) => commonFetch({ input, method: "GET" });
+  const getEvent = (input: GetEventInput) => commonFetch({ input, method: "GET" });
 
-  return { getSupplier, isLoading, data };
+  return { getEvent, isLoading, data };
 };
 
-export const useCreateSupplier = () => {
-  const { commonFetch, isLoading, data } = useFetch<Supplier>({
-    url: "http://myserver.com/api/suppliers/create",
+export const useCreateEvent = () => {
+  const { commonFetch, isLoading, data } = useFetch<Event>({
+    url: "http://192.168.1.11:3000/api/Events/create",
   });
 
-  const createSupplier = (input: CreateSupplierInput ) => commonFetch({ input, method: "POST" });
+  const createEvent = (input: CreateEventInput ) => commonFetch({ input, method: "POST" });
 
-  return { createSupplier, isLoading, data };
+  return { createEvent, isLoading, data };
 };

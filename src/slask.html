@@ -1,3 +1,29 @@
+function createEvent(event) {
+  let nextEvent = calendarEvents[targetIndex];
+  calendarEvents[targetIndex] = {
+    id: activeEventId,
+    title: title,
+    description: description,
+    location: location,
+    flair: flair,
+    status: "active",
+    all_day: false,
+    transparency: "opaque",
+    timezone: "Europe/Stockholm",
+    organizer: "",
+    recurrence: "",
+    created_at: "",
+    updated_at: "",
+    startDate: startDate,
+    endDate: endDate,
+    allDay: false,
+    attendees: attendees,
+  };
+}
+
+
+
+
 <section id="footer">
           <div id="docs">
             <svg className="icon" role="presentation" aria-hidden="true">

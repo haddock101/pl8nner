@@ -25,7 +25,6 @@ function CalendarDay({ daysArray, week, day, calendarEvents, openEditor, selecte
         onClick={(e) => selectDay(week * 7 + day, e)}
       >
         <div className="p8-calendar-cell-text p8-calendar-day-text ">
-          <HoverInfo day={daysArray[week * 7 + day]}></HoverInfo>
           {daysArray[week * 7 + day].getDate()}
         </div>
         <div className="debug">
@@ -43,8 +42,8 @@ function CalendarDay({ daysArray, week, day, calendarEvents, openEditor, selecte
                   e.stopPropagation() ||
                   openEditor("edit", week * 7 + day, `${event.id}`)
                 }
-              >
-                {event?.title.substring(0, 32)}{" "}
+              ><HoverInfo day={daysArray[week * 7 + day]} event={event}></HoverInfo>
+                {event?.title.substring(0, 32)}{" "}{event.id}
                 {event?.title.length >= 32 && "..."}
               </div>
             ),

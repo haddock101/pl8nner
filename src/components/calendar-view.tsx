@@ -9,6 +9,7 @@ import { Dialog, DialogContent } from "./ui/dialog";
 import { Item, ItemContent, ItemDescription, ItemTitle } from "./ui/item";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import CalendarDay from "./calendar-day.tsx";
+import TodayNav from "./today-nav.tsx";
 import EventEditor from "./event-editor.tsx";
 
 function CalendarView({
@@ -20,39 +21,15 @@ function CalendarView({
   setSelectedDay,
   selectedDate,
   setSelectedDate,
-  daysArray
+  daysArray,
+  setDaysArray
 }) {
-  function getFirstEventId() {
+  const getFirstEventId = () => {
     let temp = calendarEvents[0].id;
     return temp;
   }
-
-  function createEvent(event) {
-    let nextEvent = calendarEvents[targetIndex];
-    calendarEvents[targetIndex] = {
-      id: activeEventId,
-      title: title,
-      description: description,
-      location: location,
-      flair: flair,
-      status: "active",
-      all_day: false,
-      transparency: "opaque",
-      timezone: "Europe/Stockholm",
-      organizer: "",
-      recurrence: "",
-      created_at: "",
-      updated_at: "",
-      startDate: startDate,
-      endDate: endDate,
-      allDay: false,
-      attendees: attendees,
-    };
-  }
-
   const [dialogOpen, setDialogOpen] = useState(false);
   const [gridViewIndex, setGridViewIndex] = useState();
-
   const [activeEventId, setActiveEventId] = useState(getFirstEventId());
 
   const config = {
@@ -87,9 +64,7 @@ function CalendarView({
       setActiveEventId(newEventId);
       console.log("new,", calendarEvents);
     }
-    console.log("activbef", activeEventId);
-    setActiveEventId(activeEventId);
-    console.log("activafter", activeEventId);
+    // setActiveEventId(activeEventId);
 
     if (editorMode === "edit") {
       console.log("EDIT", activeEventId);
@@ -107,12 +82,18 @@ function CalendarView({
 
   return (
     <>
-      <div className="plann8r w-full">
-        <Card className="w-full p-0 ring-0 md:ring-1 rounded-none md:rounded-sm :radius-sm">
-          <CardContent className="p-0 md:p-0">
-            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+      <TodayNav
+        calendarView={calendarView}
+        setCalendarView={setCalendarView}
+        daysArray={daysArray}
+        setDaysArray={setDaysArray}
+      />
+      <div className="plann8r w-full md:p-2 sm:p-0">
+        <Card className="w-full p-0 ring-0 md:ring-1 sm:ring-0 rounded-none md:rounded-sm :radius-sm">
+          <CardContent className="p-0 md:p-0 sm:p-0">
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen} className="">
               <DialogContent
-                className="bg-mist-50 dark:bg-accent"
+                className="bg-mist-50 dark:bg-accent rounded-sm ring-0 p-3 sm:p-4"
                 showCloseButton={false}
               >
                 <EventEditor
@@ -146,7 +127,17 @@ function CalendarView({
                   className="p8-calendar-row p8-flex p8-flex-1-0"
                 >
                   {[...Array(7)].map((_, day) => (
-                    <CalendarDay key={"grid-day" + week * 7 + day} daysArray={daysArray} week={week} day={day} calendarEvents={calendarEvents} openEditor={openEditor} selectedDay={selectedDay} setSelectedDay={setSelectedDay} setSelectedDate={setSelectedDate} />
+                    <CalendarDay
+                      key={"grid-day" + week * 7 + day}
+                      daysArray={daysArray}
+                      week={week}
+                      day={day}
+                      calendarEvents={calendarEvents}
+                      openEditor={openEditor}
+                      selectedDay={selectedDay}
+                      setSelectedDay={setSelectedDay}
+                      setSelectedDate={setSelectedDate}
+                    />
                   ))}
                 </div>
               ))}

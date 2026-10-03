@@ -27,7 +27,7 @@ const DateRangePickerWithTime = ({ startDate, setStartDate, endDate, setEndDate 
             id="date-range"
             variant={"outline"}
             className={cn(
-              "w-full justify-start text-left font-normal h-11 transition-all hover:bg-muted/50 focus:ring-2 focus:ring-primary/20 cursor-pointer",
+              "w-full justify-start text-left font-normal mr-2 h-11 transition-all hover:bg-muted/50 focus:ring-0 ring-0 focus:ring-primary/20 cursor-pointer rounded-sm text-xs",
               !date && "text-muted-foreground",
             )}
           >

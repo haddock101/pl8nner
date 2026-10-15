@@ -1,4 +1,4 @@
-import { type DaysArray, type CalendarEvents, type CalendarEvent } from "../lib/my-utils.ts";
+import { type DaysArray, type CalendarEvents, type CalendarEvent } from "../lib/calendar.ts";
 export function eventsForDay(gridIndex: number, daysArray: DaysArray, calendarEvents: CalendarEvents) {
   const thisDay = daysArray[gridIndex];
   const thisDayTime = new Date(thisDay).getTime();

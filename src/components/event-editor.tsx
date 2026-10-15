@@ -1,41 +1,60 @@
-"use client";
-import { useState } from "react";
-import EmojiPicker from "emoji-picker-react";
-import { FaceSlightlySmilingPlusIcon } from "lucide-react";
+import { useState, type FormEvent } from "react";
 import { Button } from "./ui/button";
 import { Field, FieldLabel } from "./ui/field";
 import { Input } from "./ui/input";
 import DateRangePickerWithTime from "./date-range-picker-with-time.tsx";
-import { type CalendarEvents, type CalendarEvent } from "../lib/my-utils.ts";
+import type { CalendarEvent } from "../types.ts";
+import EmojiPicker from "emoji-picker-react";
+
+import { FaceSlightlySmilingPlusIcon } from "lucide-react";
 import {
   Map,
   type MapViewport,
-  // @ts-ignore
+  /* @ts-expect-error: Fix later */
 } from "@/components/ui/map";
 import { InputGroup } from "./ui/input-group.tsx";
-// import { eventsForDay } from "./events-for-day.tsx";
 
-function EventEditor({
-  // editorMode,
-  // gridViewIndex,
-  // daysArray,
-  calendarEvents,
-  setCalendarEvents,
-  setDialogOpen,
-  activeEventId,
-  setActiveEventId,
-}: {
-  editorMode: string;
-  gridViewIndex: number;
-  daysArray: object;
-  calendarEvents: CalendarEvents;
-  /* @ts-ignore */
-  setCalendarEvents: Function;
-  setDialogOpen: Function;
-  activeEventId: string;
-  // @ts-ignore
-  setActiveEventId: ActiveEventId;
-}) {
+type EventEditorProps = {
+  mode: "new" | "edit";
+  event: CalendarEvent;
+  onSave: (event: CalendarEvent) => void;
+  onDelete: (id: string) => void;
+  onCancel: () => void;
+};
+
+/**
+ * Edits a copy of `event`; nothing reaches the calendar until Save.
+ * Render with `key={event.id}` so the form resets when the event changes.
+ */
+function EventEditor({ mode, event, onSave, onDelete, onCancel }: EventEditorProps) {
+  const [title, setTitle] = useState(event.title);
+  const [description, setDescription] = useState(event.description);
+  const [location, setLocation] = useState(event.location);
+  const [start, setStart] = useState(() => new Date(event.startDate));
+  const [end, setEnd] = useState(() => new Date(event.endDate));
+  const [attendees, setAttendees] = useState(event.attendees.join(", "));
+  const [flair, setFlair] = useState(event.flair ?? "");
+const [showPicker, setShowPicker] = useState(false);
+  const isValidRange = end.getTime() >= start.getTime();
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!isValidRange) return;
+    onSave({
+      ...event,
+      title: title.trim() || "New Event",
+      description,
+      location,
+      startDate: start.toISOString(),
+      endDate: end.toISOString(),
+      attendees: attendees
+        .split(",")
+        .map((a) => a.trim())
+        .filter(Boolean),
+      flair: flair.trim() || undefined,
+    });
+  };
+
   const [viewport, setViewport] = useState<MapViewport>({
     center: [18.052318, 59.301757],
     zoom: 15,
@@ -43,75 +62,10 @@ function EventEditor({
     pitch: 0,
   });
 
-  const currentEvent: CalendarEvent =
-    calendarEvents[
-      calendarEvents.findIndex((event) => event.id === activeEventId)
-    ];
-
-  console.log(currentEvent);
-  // if (activeEventId === "") activeEventId = dayEvents[0].id;
-
-  const [title, setTitle] = useState(currentEvent.title);
-  const [description, setDescription] = useState(currentEvent.description);
-  const [location, setLocation] = useState(currentEvent.location);
-
-  const [startDate, setStartDate] = useState(currentEvent.startDate);
-  const [endDate, setEndDate] = useState(currentEvent.endDate);
-  const [showPicker, setShowPicker] = useState(false);
-  // const [startTime, setStartTime] = useState("06:00");
-  // const [endTime, setEndTime] = useState("22:00");
-  const [attendees, setAttendees] = useState(currentEvent.attendees);
-  const [flair, setFlair] = useState(currentEvent.flair);
-  // const [allDay, setAllDay] = useState(currentEvent.all_day);
-
-  const handleSaveEvent = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    //    const targetIndex = calendarEvents.findIndex((e) => e.id === activeEventId);
-    //    const nextEvent = calendarEvents[targetIndex];
-    // @ts-ignore
-    setCalendarEvents<CalendarEvents>(
-      calendarEvents.map((event: CalendarEvent) => {
-        if (event.id === activeEventId) {
-          // Create a *new* object with changes
-          return {
-            ...event,
-            id: activeEventId,
-            title: title,
-            description: description,
-            location: location,
-            flair: flair,
-            status: "active",
-            all_day: false,
-            transparency: "opaque",
-            timezone: "Europe/Stockholm",
-            organizer: "",
-            recurrence: "",
-            created_at: "",
-            updated_at: "",
-            startDate: startDate,
-            endDate: endDate,
-            allDay: false,
-            attendees: attendees,
-          };
-        } else {
-          // No changes
-          return event;
-        }
-      }),
-    );
-
-    setDialogOpen(false);
-    return false;
-  };
-
   return (
     <div id="event-editor">
-      { /* @ts-ignore */
-      } <form onSubmit={(e: SubmitEvent) => handleSaveEvent(e)}>
-        <div className="debug">id:{activeEventId}</div>
+      <form onSubmit={handleSubmit}>
         <Field className="gap-0">
-          <FieldLabel htmlFor="title">Title</FieldLabel>
           <InputGroup className="rounded-sm bg-input">
             <Input
               type="text"
@@ -138,9 +92,9 @@ function EventEditor({
             autoFocusSearch={false}
             skinTonesDisabled
             searchDisabled
-            // @ts-ignore
+            /* @ts-expect-error: Fix later */
             suggestedEmojisMode={"recent"}
-            // @ts-ignore
+            /* @ts-expect-error: Fix later */
             emojiStyle={"native"}
             width="100%"
             previewConfig={{ showPreview: false }}
@@ -192,79 +146,82 @@ function EventEditor({
             id="location"
             className="rounded-sm bg-input"
             name="location"
-
             autoComplete="off"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
           />
-          <Field className="gap-0 mt-2">
-            <FieldLabel htmlFor="location">Select duration</FieldLabel>
-            <DateRangePickerWithTime
-              startDate={startDate}
-              setStartDate={setStartDate}
-              endDate={endDate}
-
-              setEndDate={setEndDate}
-            />
-          </Field>
-
-          <Field className="gap-0 mt-2">
-            <FieldLabel htmlFor="attendees">Attendees</FieldLabel>
-            <Input
-              type="text"
-              id="attendees"
-              className="rounded-sm bg-input"
-              name="attendees"
-              autoCapitalize="off"
-              autoComplete="off"
-              value={attendees}
-              onChange={(e) => setAttendees(e.target.value)}
-            />
-          </Field>
-          <Field className="gap-0 mt-2">
-            <FieldLabel htmlFor="flair">Flair</FieldLabel>
-            <Input
-              type="text"
-              id="flair"
-              className="rounded-sm bg-input"
-              name="flair"
-              autoCapitalize="off"
-              autoComplete="off"
-              value={flair}
-              onChange={(e) => setFlair(e.target.value)}
-            />
-          </Field>
-          <div className="flex-row">
-            <Button
-              variant="default"
-              size="lg"
-              className="hover:cursor-pointer hover:bg-pink-500 w-full mt-4 text-fuchsia-50 font-extrabold rounded-sm bg-pink-300"
-              type="submit"
-            >
-              Save
-            </Button>
+        </Field>
+        <Field className="gap-0 mt-2">
+          <FieldLabel htmlFor="date-range">Select duration</FieldLabel>
+          <DateRangePickerWithTime
+            start={start}
+            end={end}
+            onChange={(nextStart, nextEnd) => {
+              setStart(nextStart);
+              setEnd(nextEnd);
+            }}
+          />
+          {!isValidRange && (
+            <p className="text-destructive text-xs mt-1">The end must be after the start.</p>
+          )}
+        </Field>
+        <Field className="gap-0 mt-2">
+          <FieldLabel htmlFor="attendees">Attendees (comma-separated)</FieldLabel>
+          <Input
+            type="text"
+            id="attendees"
+            className="rounded-sm bg-input"
+            name="attendees"
+            autoCapitalize="off"
+            autoComplete="off"
+            value={attendees}
+            onChange={(e) => setAttendees(e.target.value)}
+          />
+        </Field>
+        <Field className="gap-0 mt-2">
+          <FieldLabel htmlFor="flair">Flair</FieldLabel>
+          <Input
+            type="text"
+            id="flair"
+            className="rounded-sm bg-input"
+            name="flair"
+            autoCapitalize="off"
+            autoComplete="off"
+            value={flair}
+            onChange={(e) => setFlair(e.target.value)}
+          />
+        </Field>
+        <div className="flex-row">
+          <Button
+            size="lg"
+            className="hover:cursor-pointer hover:bg-pink-500 w-full mt-4 text-fuchsia-50 font-extrabold rounded-sm bg-pink-300"
+            type="submit"
+            disabled={!isValidRange}
+          >
+            Save
+          </Button>
+          {mode === "edit" ? (
             <Button
               variant="destructive"
               size="lg"
               className="hover:cursor-pointer w-20 mt-4 font-extrabold rounded-sm"
               type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                console.log("DELETE" + activeEventId);
-                const nextCalendarEvents = calendarEvents.filter(
-                  (e) => e.id !== activeEventId,
-                );
-                setActiveEventId(calendarEvents[0].id);
-                // @ts-ignore
-                setCalendarEvents(nextCalendarEvents);
-
-                setDialogOpen(false);
-              }}
+              onClick={() => onDelete(event.id)}
             >
               Delete
             </Button>
-          </div>
-        </Field>
+          ) : (
+            <Button
+              variant="ghost"
+              size="lg"
+              className="hover:cursor-pointer w-20 mt-4 font-extrabold rounded-sm"
+              type="button"
+              onClick={onCancel}
+            >
+              Cancel
+            </Button>
+          )}
+        </div>
       </form>
     </div>
   );

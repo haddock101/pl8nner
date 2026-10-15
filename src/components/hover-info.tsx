@@ -1,23 +1,25 @@
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
+import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import type { CalendarEvent } from "../lib/my-utils.ts";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
+import type { CalendarEvent } from "../types.ts";
 
-function HoverInfo({ day, event }: { day: Date; event: CalendarEvent; }) {
-return (
-<HoverCard>
-  <HoverCardTrigger className="opacity-0 size-3 absolute w-full"><CalendarIcon className="size-3 absolute"></CalendarIcon></HoverCardTrigger>
-  <HoverCardContent className="" side="right">
-      timedate:{day.toISOString()}<br />
-      event.id: {event.id}<br />
-      event.title: {event.title}<br />
-      event.description: {event.description}<br />
-      event.fromDate: {event.startDate.toLocaleString()}<br />
-      event.toDate: {event.endDate.toLocaleString()}<br />
-  </HoverCardContent>
-</HoverCard>
-)
-
-
+function HoverInfo({ day, event }: { day: Date; event: CalendarEvent }) {
+  return (
+    <HoverCard>
+      <HoverCardTrigger className="opacity-0 size-3 absolute w-full">
+        <CalendarIcon className="size-3 absolute" />
+      </HoverCardTrigger>
+      <HoverCardContent side="right">
+        <div className="font-semibold">{event.title || "No title"}</div>
+        <div>{format(day, "PPPP")}</div>
+        <div>
+          {format(new Date(event.startDate), "PP p")} – {format(new Date(event.endDate), "PP p")}
+        </div>
+        {event.location && <div>{event.location}</div>}
+        {event.description && <div>{event.description}</div>}
+      </HoverCardContent>
+    </HoverCard>
+  );
 }
 
 export default HoverInfo;

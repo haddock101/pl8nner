@@ -1,5 +1,5 @@
 import { addDays } from "date-fns";
-import type { DaysArray } from "../lib/my-utils.ts";
+import type { DaysArray } from "../lib/calendar.ts";
 
 export function getDaysArray(fromDate: Date) {
   const daysArray: DaysArray = [];

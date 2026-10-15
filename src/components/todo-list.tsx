@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 // import { KeyboardEvent } from "react";
 import { SquarePen, Trash2Icon, Check } from "lucide-react";
 import { Button } from "./ui/button";
@@ -9,19 +9,14 @@ import { Toggle } from "./ui/toggle";
 
 function TodoList() {
   const [task, setTask] = useState("");
-  const [todos, setTodos] = useState([]);
-
-  /* todos={todos} onRemove={handleRemoveTodo} */
-
-  // Load TODOs from local storage on app startup
-  useMemo(() => {
-    // @ts-ignore
-    const storedTodos = JSON.parse(localStorage.getItem("todos"));
-    if (storedTodos) {
-      // eslint-disable-next-line react-hooks/set-state-in-render
-      setTodos(storedTodos);
+  // Load TODOs from local storage once, on first render
+  const [todos, setTodos] = useState<string[]>(() => {
+    try {
+      return JSON.parse(localStorage.getItem("todos") ?? "[]");
+    } catch {
+      return [];
     }
-  }, []);
+  });
 
   // Update local storage whenever TODOs change
   useEffect(() => {
@@ -36,7 +31,6 @@ function TodoList() {
   const handleAddTodo = (e: React.SubmitEvent) => {
     e.preventDefault();
     if (task.trim() !== "") {
-      // @ts-ignore
       setTodos([...todos, task]);
       setTask("");
     }

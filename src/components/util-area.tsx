@@ -1,5 +1,4 @@
-import { useMemo, useState } from "react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Draggable from "react-draggable";
 import { GripVertical } from "lucide-react";
 /* import { DraggableCore } from "react-draggable"; */
@@ -23,23 +22,13 @@ import TodoList from "./todo-list.tsx";
 
 function UtilArea() {
   const nodeRef = useRef(null);
-  const [defaultPosition, setDefaultPosition] = useState();
-  // const [position, setPosition] = useState();
-  //props.value = useStickyState('ads', 'util-area-value');
-
-  useMemo(() => {
-    const defaultPosition = JSON.parse(
-      // @ts-ignore
-      localStorage.getItem("storedDefaultPosition")
-    );
-    if (defaultPosition) {
-      // eslint-disable-next-line react-hooks/set-state-in-render
-      setDefaultPosition(defaultPosition);
-    } else {
-      // setPosition({ x: 0, y: 0 });
-      // setDefaultPosition({ x: 0, y: 0 });
+  const [defaultPosition] = useState<{ x: number; y: number } | undefined>(() => {
+    try {
+      return JSON.parse(localStorage.getItem("storedDefaultPosition") ?? "null") ?? undefined;
+    } catch {
+      return undefined;
     }
-  }, []);
+  });
 
   return (
     <section id="util-box" className="justify-end">

@@ -15,6 +15,7 @@ function TodoList() {
 
   // Load TODOs from local storage on app startup
   useMemo(() => {
+    // @ts-ignore
     const storedTodos = JSON.parse(localStorage.getItem("todos"));
     if (storedTodos) {
       // eslint-disable-next-line react-hooks/set-state-in-render
@@ -35,6 +36,7 @@ function TodoList() {
   const handleAddTodo = (e: React.SubmitEvent) => {
     e.preventDefault();
     if (task.trim() !== "") {
+      // @ts-ignore
       setTodos([...todos, task]);
       setTask("");
     }

@@ -1,6 +1,6 @@
 "use client";
 
-function BlockLabel({ className, ...props }) {
+function BlockLabel({...props }) {
   return <div className="block-label" {...props}></div>;
 }
 

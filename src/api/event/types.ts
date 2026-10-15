@@ -8,7 +8,7 @@ export type CreateEventInput = {
   startDate: string;
 }
 
-export type Event = {
+export type CalendarEvent = {
   id: "event-0",
   title: "a",
   description: "",

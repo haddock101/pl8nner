@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import { useRef } from "react";
 import Draggable from "react-draggable";
 import { GripVertical } from "lucide-react";
@@ -29,7 +29,8 @@ function UtilArea() {
 
   useMemo(() => {
     const defaultPosition = JSON.parse(
-      localStorage.getItem("storedDefaultPosition"),
+      // @ts-ignore
+      localStorage.getItem("storedDefaultPosition")
     );
     if (defaultPosition) {
       // eslint-disable-next-line react-hooks/set-state-in-render

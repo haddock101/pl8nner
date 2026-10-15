@@ -1,6 +1,8 @@
 // requests.ts
 
-import { CreateEventInput, GetEventInput, Event } from "./types"
+/*
+import { useFetch } from "react";
+import { type CreateEventInput, type GetEventInput, type Event } from "./types"
 
 
 export const useGetEvent = () => {
@@ -8,6 +10,8 @@ export const useGetEvent = () => {
  // This really helps to flesh out the quality of life for the API and is part
  // of creating something that is self documenting. We put Event because we know
  // that is what this endpoint will always return.
+
+
   const { commonFetch, isLoading, data } = useFetch<Event>({
     url: "http://localhost:3000/api/Events/get",
   });
@@ -28,3 +32,4 @@ export const useCreateEvent = () => {
 
   return { createEvent, isLoading, data };
 };
+*/

@@ -1,8 +1,10 @@
-'use client';
+"use client";
+
+import type { CalendarEvent } from "#lib/my-utils";
 
 function getEvents() {
-  const dummyData = [
-  /*
+  const dummyData: CalendarEvent[] = [
+    /*
       {
         id: "event-0",
         title: "a",
@@ -33,37 +35,68 @@ function getEvents() {
         attendees: ["alice@example.com", "bob@example.com"],
     },
       */
-      {
-        id: "event-2",
-        title: "Bandy",
-        description: "Weekly progress update and planning.",
-        location: "Konsum",
-        startDate:  "Fri Sep 04 2026 00:00:00 GMT+0200 (Central European Summer Time)",
-        endDate:    "Fri Sep 16 2026 09:00:00 GMT+0200 (Central European Summer Time)",
-        allDay: false,
-        attendees: ["alice@example.com", "bob@example.com"],
-      },
-      {
-        id: "event-3",
-        title: "Piingis",
-        flair: "maybe",
-        description: "Weekly progress update and planning.",
-        location: "Konsum",
-        startDate:  "Fri Sep 04 2026 00:00:00 GMT+0200 (Central European Summer Time)",
-        endDate:    "Fri Sep 16 2026 09:00:00 GMT+0200 (Central European Summer Time)",
-        allDay: false,
-        attendees: ["alice@example.com", "bob@example.com"],
-      },
-      {
-        id: "event-4",
-        title: "Stryk",
-        flair: "important",
-        description: "Weekly progress update and planning.",
-        location: "Konsum",
-        startDate:  "Fri Sep 04 2026 00:00:00 GMT+0200 (Central European Summer Time)",
-        endDate:    "Sat Sep 05 2026 10:00:00 GMT+0200 (Central European Summer Time)",
-        allDay: false,
-        attendees: ["alice@example.com", "bob@example.com"],
+    {
+      id: "event-2",
+      title: "Bandy",
+      description: "Weekly progress update and planning.",
+      location: "Konsum",
+      startDate:
+        "Fri Sep 04 2026 00:00:00 GMT+0200 (Central European Summer Time)",
+      endDate:
+        "Fri Sep 16 2026 09:00:00 GMT+0200 (Central European Summer Time)",
+      allDay: false,
+      attendees: ["alice@example.com", "bob@example.com"],
+      status: "active",
+      recurrence: "",
+      createdOn: "",
+      updatedOn: "",
+      transparency: "",
+      timezone: "",
+      organizer: "",
+      createdBy: "",
+      flair: "",
+    },
+    {
+      id: "event-3",
+      title: "Piingis",
+      flair: "maybe",
+      description: "Weekly progress update and planning.",
+      location: "Konsum",
+      startDate:
+        "Fri Sep 04 2026 00:00:00 GMT+0200 (Central European Summer Time)",
+      endDate:
+        "Fri Sep 16 2026 09:00:00 GMT+0200 (Central European Summer Time)",
+      allDay: false,
+      attendees: ["alice@example.com", "bob@example.com"],
+      status: "active",
+      recurrence: "",
+      createdOn: "",
+      updatedOn: "",
+      transparency: "",
+      timezone: "",
+      organizer: "",
+      createdBy: "",
+    },
+    {
+      id: "event-4",
+      title: "Stryk",
+      flair: "important",
+      description: "Weekly progress update and planning.",
+      location: "Konsum",
+      startDate:
+        "Fri Sep 04 2026 00:00:00 GMT+0200 (Central European Summer Time)",
+      endDate:
+        "Sat Sep 05 2026 10:00:00 GMT+0200 (Central European Summer Time)",
+      allDay: false,
+      attendees: ["alice@example.com", "bob@example.com"],
+      status: "active",
+      recurrence: "",
+      createdOn: "",
+      updatedOn: "",
+      transparency: "",
+      timezone: "",
+      organizer: "",
+      createdBy: "",
     },
     {
       id: "event-6",
@@ -75,8 +108,16 @@ function getEvents() {
       endDate: "2026-10-04T10:00:00Z",
       allDay: false,
       attendees: ["alice@example.com", "bob@example.com"],
+      status: "active",
+      recurrence: "",
+      createdOn: "",
+      updatedOn: "",
+      transparency: "",
+      timezone: "",
+      organizer: "",
+      createdBy: "",
     },
-      /*
+    /*
       {
         id: "event-5",
         title: "h",
@@ -97,9 +138,9 @@ function getEvents() {
         attendees: ["alice@example.com", "bob@example.com"],
       },
        */
-    ];
+  ];
 
   return dummyData;
 }
 
-export default getEvents
+export default getEvents;

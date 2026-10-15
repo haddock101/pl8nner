@@ -1,5 +1,5 @@
 // CreateEvent.tsx
-
+/*
 export const CreateEvent: React.FC = () => {
   const {
     createEvent: { mutation: createEvent, data, isLoading },
@@ -30,3 +30,4 @@ export const CreateEvent: React.FC = () => {
     <div>Successfully created supplier {data.name}</div>
   );
 };
+ */

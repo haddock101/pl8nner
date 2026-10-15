@@ -1,12 +1,22 @@
 import react, { reactCompilerPreset } from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import babel from "@rolldown/plugin-babel";
-import mix from "vite-plugin-mix";
 import { defineConfig } from "vite";
+import * as path from "path";
+import { fileURLToPath } from "node:url";
+
+const filesNeedToExclude = [
+  "src/api/*",
+  "src/table/*",
+  "src/table/data-table.tsx",
+];
+const filesPathToExclude = filesNeedToExclude.map((src) => {
+  return fileURLToPath(new URL(src, import.meta.url));
+});
 
 // https://vite.dev/config/
 export default defineConfig({
-/*
+  /*
   server: {
       proxy: {
         '/api': {
@@ -20,7 +30,26 @@ export default defineConfig({
       }
   },
    */
-
+  build: {
+    manifest: true,
+    chunkSizeWarningLimit: 100000,
+    rolldownOptions: {
+      output: {
+        codeSplitting: {
+        minSize: 2000,
+        groups: [
+          {
+            name: "vendor",
+            test: /node_modules/,
+          },
+          ],
+        },
+      },
+    },
+    rollupOptions: {
+      external: [...filesPathToExclude],
+    },
+  },
   plugins: [
     react(),
     tailwindcss(),
@@ -30,15 +59,20 @@ export default defineConfig({
       handler: './handler.ts',
       }), */
   ],
+  resolve: {
+    alias: {
+      "@": path.resolve(import.meta.dirname, "./src"),
+    },
+  },
   server: {
     port: 5173,
     cors: true,
     proxy: {
-      '/api': {
-        target: 'http://127.0.0.1:5555',
+      "/api": {
+        target: "http://127.0.0.1:5555",
         changeOrigin: true,
         secure: false,
-        rewrite: (path) => path.replace(/^\/api/, ''),
+        rewrite: (path) => path.replace(/^\/api/, ""),
       },
     },
   },

@@ -1,15 +1,24 @@
 "use client";
 import { useState } from "react";
+import EmojiPicker from "emoji-picker-react";
+import { FaceSlightlySmilingPlusIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import { Field, FieldLabel } from "./ui/field";
 import { Input } from "./ui/input";
 import DateRangePickerWithTime from "./date-range-picker-with-time.tsx";
-import { eventsForDay } from "./events-for-day.tsx";
+import { type CalendarEvents, type CalendarEvent } from "../lib/my-utils.ts";
+import {
+  Map,
+  type MapViewport,
+  // @ts-ignore
+} from "@/components/ui/map";
+import { InputGroup } from "./ui/input-group.tsx";
+// import { eventsForDay } from "./events-for-day.tsx";
 
 function EventEditor({
-  editorMode,
-  gridViewIndex,
-  daysArray,
+  // editorMode,
+  // gridViewIndex,
+  // daysArray,
   calendarEvents,
   setCalendarEvents,
   setDialogOpen,
@@ -19,54 +28,50 @@ function EventEditor({
   editorMode: string;
   gridViewIndex: number;
   daysArray: object;
-  calendarEvents: object;
+  calendarEvents: CalendarEvents;
+  /* @ts-ignore */
   setCalendarEvents: Function;
-  setDialogOpen: boolean;
+  setDialogOpen: Function;
   activeEventId: string;
-  setActiveEventId: Function;
+  // @ts-ignore
+  setActiveEventId: ActiveEventId;
 }) {
-  let dayEvents = [];
-
-  if (editorMode === "new") {
-
-
-  } else {
-
-    dayEvents[0] =
-      calendarEvents[
-        calendarEvents.findIndex((event) => event.id === activeEventId)
-      ];
-  }
-
-  console.log(dayEvents);
-  // if (activeEventId === "") activeEventId = dayEvents[0].id;
-
-  const [title, setTitle] = useState(dayEvents[0].title);
-  const [description, setDescription] = useState(dayEvents[0].description);
-  const [location, setLocation] = useState(dayEvents[0].location);
-
-  const [date, setDate] = useState<DateRange | undefined>({
-    from: dayEvents[0].startDate,
-    to: dayEvents[0].endDate,
+  const [viewport, setViewport] = useState<MapViewport>({
+    center: [18.052318, 59.301757],
+    zoom: 15,
+    bearing: 0,
+    pitch: 0,
   });
 
-  const [startDate, setStartDate] = useState(dayEvents[0].startDate);
-  const [endDate, setEndDate] = useState(dayEvents[0].endDate);
+  const currentEvent: CalendarEvent =
+    calendarEvents[
+      calendarEvents.findIndex((event) => event.id === activeEventId)
+    ];
 
-  const [startTime, setStartTime] = useState("06:00");
-  const [endTime, setEndTime] = useState("22:00");
-  const [attendees, setAttendees] = useState(dayEvents[0].attendees);
-  const [flair, setFlair] = useState(dayEvents[0].flair);
-  const [allDay, setAllDay] = useState(dayEvents[0].all_day);
+  console.log(currentEvent);
+  // if (activeEventId === "") activeEventId = dayEvents[0].id;
 
-  const handleSaveEvent = (e: SubmitEvent) => {
+  const [title, setTitle] = useState(currentEvent.title);
+  const [description, setDescription] = useState(currentEvent.description);
+  const [location, setLocation] = useState(currentEvent.location);
+
+  const [startDate, setStartDate] = useState(currentEvent.startDate);
+  const [endDate, setEndDate] = useState(currentEvent.endDate);
+  const [showPicker, setShowPicker] = useState(false);
+  // const [startTime, setStartTime] = useState("06:00");
+  // const [endTime, setEndTime] = useState("22:00");
+  const [attendees, setAttendees] = useState(currentEvent.attendees);
+  const [flair, setFlair] = useState(currentEvent.flair);
+  // const [allDay, setAllDay] = useState(currentEvent.all_day);
+
+  const handleSaveEvent = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const targetIndex = calendarEvents.findIndex((e) => e.id === activeEventId);
 
-    let nextEvent = calendarEvents[targetIndex];
-
-    setCalendarEvents(
-      calendarEvents.map((event) => {
+    //    const targetIndex = calendarEvents.findIndex((e) => e.id === activeEventId);
+    //    const nextEvent = calendarEvents[targetIndex];
+    // @ts-ignore
+    setCalendarEvents<CalendarEvents>(
+      calendarEvents.map((event: CalendarEvent) => {
         if (event.id === activeEventId) {
           // Create a *new* object with changes
           return {
@@ -102,18 +107,45 @@ function EventEditor({
 
   return (
     <div id="event-editor">
-      <form onSubmit={(e) => handleSaveEvent(e)}>
+      { /* @ts-ignore */
+      } <form onSubmit={(e: SubmitEvent) => handleSaveEvent(e)}>
         <div className="debug">id:{activeEventId}</div>
         <Field className="gap-0">
           <FieldLabel htmlFor="title">Title</FieldLabel>
-          <Input
-            type="text"
-            id="title"
-            className="rounded-sm bg-input"
-            name="title"
-            autoComplete="off"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+          <InputGroup className="rounded-sm bg-input">
+            <Input
+              type="text"
+              id="title"
+              className="bg-input focus-visible:ring-0 focus-visible:border-ring-none rounded-l-sm rounded-r-none border-l-0 ring-0"
+              name="title"
+              autoComplete="off"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+            <Button
+              className="w-10 rounded-r-sm rounded-l-none border-l-0 border-r-0 ring-0 hover:bg-sidebar-accent-foreground bg-accent text-input"
+              onClick={(e) => {
+                console.log(e);
+                setShowPicker(!showPicker);
+              }}
+            >
+              <FaceSlightlySmilingPlusIcon />
+            </Button>
+          </InputGroup>
+          <EmojiPicker
+            lazyLoadEmojis
+            open={showPicker}
+            autoFocusSearch={false}
+            skinTonesDisabled
+            searchDisabled
+            // @ts-ignore
+            suggestedEmojisMode={"recent"}
+            // @ts-ignore
+            emojiStyle={"native"}
+            width="100%"
+            previewConfig={{ showPreview: false }}
+            className="max-w-full rounded-sm m-t-2 top-2 text-xs"
+            onEmojiClick={(emojiData) => setTitle(title + emojiData.emoji)}
           />
         </Field>
         <Field className="gap-0 mt-2">
@@ -123,12 +155,36 @@ function EventEditor({
             id="description"
             className="rounded-sm bg-input dark:bg-input"
             name="description"
-
             autoComplete="off"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
         </Field>
+        <div className="relative h-42 mt-2 rounded border w-full">
+          <Map viewport={viewport} onViewportChange={setViewport} />
+          <div className="debug bg-background/80 absolute top-2 left-2 z-10 flex flex-wrap gap-x-3 gap-y-1 rounded border px-2 mr-2 py-1.5 font-mono text-xs">
+            <span>
+              <span className="text-muted-foreground text-xs">lng:</span>{" "}
+              {viewport.center[0].toFixed(3)}
+            </span>
+            <span>
+              <span className="text-muted-foreground">lat:</span>{" "}
+              {viewport.center[1].toFixed(3)}
+            </span>
+            <span>
+              <span className="text-muted-foreground">zoom:</span>{" "}
+              {viewport.zoom.toFixed(1)}
+            </span>
+            <span>
+              <span className="text-muted-foreground">bearing:</span>{" "}
+              {viewport.bearing.toFixed(1)}°
+            </span>
+            <span>
+              <span className="text-muted-foreground">pitch:</span>{" "}
+              {viewport.pitch.toFixed(1)}°
+            </span>
+          </div>
+        </div>
         <Field className="gap-0 mt-2">
           <FieldLabel htmlFor="location">Location</FieldLabel>
           <Input
@@ -180,7 +236,7 @@ function EventEditor({
           </Field>
           <div className="flex-row">
             <Button
-              variant="primary"
+              variant="default"
               size="lg"
               className="hover:cursor-pointer hover:bg-pink-500 w-full mt-4 text-fuchsia-50 font-extrabold rounded-sm bg-pink-300"
               type="submit"
@@ -195,10 +251,11 @@ function EventEditor({
               onClick={(e) => {
                 e.preventDefault();
                 console.log("DELETE" + activeEventId);
-                let nextCalendarEvents = calendarEvents.filter(
+                const nextCalendarEvents = calendarEvents.filter(
                   (e) => e.id !== activeEventId,
                 );
                 setActiveEventId(calendarEvents[0].id);
+                // @ts-ignore
                 setCalendarEvents(nextCalendarEvents);
 
                 setDialogOpen(false);

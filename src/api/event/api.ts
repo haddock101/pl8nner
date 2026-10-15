@@ -1,3 +1,5 @@
+/*
+
 import { useGetEvent, useCreateEvent } from "./requests";
 
 export const useEventApi = () => {
@@ -26,3 +28,4 @@ export const useEventApi = () => {
     },
   };
 };
+ */

@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { format, lastDayOfMonth, startOfWeek, subMonths, addMonths, addDays } from "date-fns";
-import getWeek from "../lib/my-utils.ts";
+import { startOfWeek, subMonths, addMonths } from "date-fns";
+import getWeek, { type CalendarView, type DaysArray } from "../lib/my-utils.ts";
 import getDaysArray from "./get-days-array.tsx";
 import { Button } from "./ui/button";
 import { ButtonGroup } from "./ui/button-group";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+
 import {
   Select,
   SelectContent,
@@ -18,36 +19,41 @@ import {
 import getMonths from "../api/months.tsx";
 
 function TodayNav({
-  daysArray,
   setDaysArray,
-  week,
-  day,
+  // @ts-ignore
+  selectedDate,
   calendarView,
   setCalendarView,
-  calendarEvents,
-  openEditor,
-  selectedDay,
-  setSelectedDay,
-  setSelectedDate,
+}: {
+  setDaysArray: DaysArray;
+  calendarView: CalendarView;
+  setCalendarView: CalendarView;
 }) {
-  const [months, setMonths] = useState(getMonths());
+  const initialMonths = getMonths();
+  const [months /* setMonths */] = useState(initialMonths);
 
+
+  /*
   const firstOfCurrentMonth = new Date(
     format(new Date(), "yyyy-MM-01") + "T23:59:00",
   );
+*/
 
   const goPrevious = () => {
+    console.log(selectedDate);
     console.log(calendarView.firstOfCurrentMonth);
-    let thisMonth = new Date(calendarView.firstOfCurrentMonth);
-    let nextMonth = subMonths(thisMonth, 1);
+    const thisMonth = new Date(calendarView.firstOfCurrentMonth);
+    const nextMonth = subMonths(thisMonth, 1);
     console.log(nextMonth);
-    let nextStartOfMonthViewDate = startOfWeek(
+    const nextStartOfMonthViewDate = startOfWeek(
       new Date(nextMonth.getFullYear(), nextMonth.getMonth(), 1, 1, 1),
       { weekStartsOn: 1 },
     );
     console.log(nextStartOfMonthViewDate);
-    setDaysArray(getDaysArray(nextStartOfMonthViewDate));
-
+    const nextDaysArray: DaysArray = getDaysArray(nextStartOfMonthViewDate);
+    // @ts-ignore
+    setDaysArray(nextDaysArray);
+    // @ts-ignore
     setCalendarView({
       firstOfCurrentMonth: nextMonth,
       startOfMonthViewDate: nextStartOfMonthViewDate,
@@ -60,15 +66,15 @@ function TodayNav({
 
   const goNext = () => {
     console.log(calendarView.firstOfCurrentMonth);
-    let thisMonth = new Date(calendarView.firstOfCurrentMonth);
-    let nextMonth = addMonths(thisMonth, 1);
+    const thisMonth = new Date(calendarView.firstOfCurrentMonth);
+    const nextMonth = addMonths(thisMonth, 1);
     console.log(nextMonth);
-    let nextStartOfMonthViewDate = startOfWeek(
+    const nextStartOfMonthViewDate = startOfWeek(
       new Date(nextMonth.getFullYear(), nextMonth.getMonth(), 1, 1, 1),
       { weekStartsOn: 1 },
     );
-    console.log(nextStartOfMonthViewDate);
 
+    // @ts-ignore
     setCalendarView({
       firstOfCurrentMonth: nextMonth,
       startOfMonthViewDate: nextStartOfMonthViewDate,
@@ -77,45 +83,38 @@ function TodayNav({
       day: nextStartOfMonthViewDate.getDay(),
       week: getWeek(nextStartOfMonthViewDate),
     });
-
+    // @ts-ignore
     setDaysArray(getDaysArray(nextStartOfMonthViewDate));
   };
-
-  const setMonthInView = (month) => {
-    const thisNow = new Date(calendarView.startOfMonthViewDate);
-    const nextStartOfMonthViewDate = startOfWeek(
-      new Date(thisNow.getFullYear(), month, 1, 1, 1),
-      { weekStartsOn: 1 },
-    );
-    setCalendarView({
-      firstOfCurrentMonth: nextMonth,
-      startOfMonthViewDate: nextStartOfMonthViewDate,
-      month: nextStartOfMonthViewDate.getMonth(),
-      year: nextStartOfMonthViewDate.getFullYear(),
-      day: nextStartOfMonthViewDate.getDay(),
-      week: getWeek(nextStartOfMonthViewDate),
-    });
-
-    setDaysArray(getDaysArray(nextStartOfMonthViewDate));
-  };
-
 
   const goToday = () => {
-    alert("gotoday");
+    // alert("gotoday");
   };
 
   return (
     <>
+      {/*
+      <Map center={[59.301757, 18.052318]}>
+          <MapTileLayer api-key="cb1_498g_1_71b29e9e35dd85d307722c5a" url="https://basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png?key=cb1_498g_1_71b29e9e35dd85d307722c5a"/>
+          <MapZoomControl />
+          <MapMarker position={[59.301757, 18.052318]}>
+              <MapPopup>Hemma</MapPopup>
+          </MapMarker>
+
+      </Map>
+      */ }
+
+
       <div className="flex p-2 items-end justify-end">
         <div className="w-2/3">
           <h2 className="mb-0">
             <strong>
               {Intl.DateTimeFormat("en", { month: "long" }).format(
-                calendarView.firstOfCurrentMonth
+                calendarView.firstOfCurrentMonth,
               )}
             </strong>{" "}
             {Intl.DateTimeFormat("en", { year: "numeric" }).format(
-              calendarView.firstOfCurrentMonth
+              calendarView.firstOfCurrentMonth,
             )}{" "}
           </h2>
         </div>

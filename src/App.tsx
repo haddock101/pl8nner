@@ -2,14 +2,11 @@
 
 import { useState } from "react";
 import { format, startOfWeek } from "date-fns";
-import getWeek from "./lib/my-utils.ts";
+import getWeek, { type CalendarEvent } from "./lib/my-utils.ts";
 import shseLogo from "./assets/shse-alt.svg";
-import CalendarView from "./components/calendar-view";
+import CalendarGridView from "./components/calendar-grid-view";
 import { ThemeToggleAnimated } from "./components/theme-toggle-animated.tsx";
-import {
-  Settings,
-  CircleArrowLeft,
-} from "lucide-react";
+import { Settings, CircleArrowLeft } from "lucide-react";
 import { Button } from "./components/ui/button";
 import { ButtonGroup } from "./components/ui/button-group";
 import getEvents from "./api/events.tsx";
@@ -18,17 +15,25 @@ import getDaysArray from "./components/get-days-array";
 
 // AIzaSyCfPTJZCZeRkIx5BT8K_0dE_6i75ndzMKc
 
-
-
 function App() {
-  const firstOfCurrentMonth = new Date(format(new Date(), "yyyy-MM-01") + "T23:59:00");
+  const firstOfCurrentMonth = new Date(
+    format(new Date(), "yyyy-MM-01") + "T23:59:00",
+  );
 
   const startOfMonthViewDate = startOfWeek(
-    new Date(firstOfCurrentMonth.getFullYear(), firstOfCurrentMonth.getMonth(), 1, 1, 1),
+    new Date(
+      firstOfCurrentMonth.getFullYear(),
+      firstOfCurrentMonth.getMonth(),
+      1,
+      1,
+      1,
+    ),
     { weekStartsOn: 1 },
   );
 
-  const [daysArray, setDaysArray] = useState(getDaysArray(startOfMonthViewDate));
+  const [daysArray, setDaysArray] = useState(
+    getDaysArray(startOfMonthViewDate),
+  );
 
   const [selectedDay, setSelectedDay] = useState(0);
 
@@ -36,7 +41,7 @@ function App() {
 
   const now = new Date(firstOfCurrentMonth);
 
-  let initialEvents = getEvents();
+  const initialEvents: CalendarEvent[] = getEvents();
 
   const [calendarEvents, setCalendarEvents] = useState(initialEvents);
   const [calendarView, setCalendarView] = useState({
@@ -45,10 +50,8 @@ function App() {
     month: now.getMonth(), // Intl.DateTimeFormat("en", { month: "long" }).format()
     year: now.getFullYear(), // Intl.DateTimeFormat("en", { year: "numeric" }).format(now),
     day: now.getDay(), // Intl.DateTimeFormat("en", { day: "numeric" }).format(now),
-    week: getWeek(now)
+    week: getWeek(now),
   });
-  const [activeEventId, setActiveEventId] = useState(calendarEvents[0].id);
-
 
   return (
     <>
@@ -56,18 +59,18 @@ function App() {
         <img className="shse-logo" src={shseLogo} alt="" />
       </div>
       <section id="center" className="justify-center md:mt-4 md:mb-20">
-          <CalendarView
-            calendarEvents={calendarEvents}
-            setCalendarEvents={setCalendarEvents}
-            calendarView={calendarView}
-            setCalendarView={setCalendarView}
-            selectedDay={selectedDay}
-            setSelectedDay={setSelectedDay}
-            selectedDate={selectedDate}
-            setSelectedDate={setSelectedDate}
+        <CalendarGridView
+          calendarEvents={calendarEvents}
+          setCalendarEvents={setCalendarEvents}
+          calendarView={calendarView}
+          setCalendarView={setCalendarView}
+          selectedDay={selectedDay}
+          setSelectedDay={setSelectedDay}
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
           daysArray={daysArray}
           setDaysArray={setDaysArray}
-            />
+        />
       </section>
 
       {/* screenmode and settings nav */}

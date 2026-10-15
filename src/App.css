@@ -191,6 +191,12 @@ div.hero {
     background: rgba(255, 255, 255, 0);
 }
 
+div.hero {
+    opacity: 0.1;
+    pointer-events: none;
+    z-index: 100;
+}
+
 div.cv {
     display: flex;
     flex-direction: column;
@@ -564,7 +570,7 @@ div.p8-calendar-row:nth-of-type(6) {
 }
 .p8-calendar-week-days .p8-calendar-week-day {
     text-align: right;
-    font-size: 1em;
+    font-size: 0.6em;
     margin-right: 3px;
 }
 
@@ -638,10 +644,10 @@ div.p8-calendar-row:nth-of-type(6) {
     padding: 0 0em;
     position: relative;
     margin-right: -2px;
-    background-color: rgba(0, 0, 0, 0.10);
+    /* background-color: rgba(0, 0, 0, 0.10); */
 }
 .p8-calendar-cell-text:hover {
-    background-color: rgba(0, 0, 0, 0.04);
+    /* background-color: rgba(0, 0, 0, 0.04); */
 }
 
 [role="button"] {
@@ -720,6 +726,10 @@ div.p8-calendar-row:nth-of-type(6) {
     opacity: 1;
 }
 
+.p8-calendar-cell.p8-calendar-day.is-first {
+
+    border-left:2px solid var(--accent-border);
+}
 /*
 .p8-calendar-label-end.p8-ltr .p8-calendar-label-background,
 .p8-calendar-label-start.p8-rtl .p8-calendar-label-background {
@@ -765,11 +775,28 @@ div.p8-calendar-row:nth-of-type(6) {
 
 }
 
+.event-wrapper .text-md {
+
+
+}
+
+.event-wrapper .text-sm {
+
+}
+
+
 .event-wrapper {
+
     position: absolute;
     width: calc(100% - 6px);
 }
 
 .date-picker-modal {
     top:150px;
+}
+.epr-emoji-category {
+
+}
+.epr-emoji-category h2.epr-emoji-category-label{
+    display: none  ;
 }

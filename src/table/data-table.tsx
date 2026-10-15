@@ -36,7 +36,7 @@ export function DataTable<TData extends RowData>({
               <TableHead
                   key={header.id}
                   id={header.id}
-                  isRowHeader={header.index === 0}
+
               >
                   {header.isPlaceholder ? null : (
                       <table.FlexRender header={header} />
@@ -44,7 +44,7 @@ export function DataTable<TData extends RowData>({
               </TableHead>
           ))}
         </TableHeader>
-        <TableBody renderEmptyState={() => "No results."}>
+        <TableBody>
           {table.getRowModel().rows.map((row) => (
             <TableRow key={row.id} id={row.id}>
               {row.getVisibleCells().map((cell) => (

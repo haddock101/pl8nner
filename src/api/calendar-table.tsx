@@ -1,3 +1,4 @@
+/*
 export const EventsTableView: React.FC = () => {
 
   const {
@@ -16,3 +17,4 @@ export const EventsTableView: React.FC = () => {
 
   return loading ? <Loader /> : <EventsTable events={events} />
 }
+ */

@@ -1,18 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { format, lastDayOfMonth, startOfWeek, addDays } from "date-fns";
+import { addDays } from "date-fns";
 
-import { type DateRange } from "react-day-picker";
-import { Card, CardContent } from "./ui/card";
-import { Dialog, DialogContent } from "./ui/dialog";
-import { Item, ItemContent, ItemDescription, ItemTitle } from "./ui/item";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import { Card, CardContent } from "./ui/card.tsx";
+import { Dialog, DialogContent } from "./ui/dialog.tsx";
+import { Item, ItemContent, ItemDescription, ItemTitle } from "./ui/item.tsx";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs.tsx";
 import CalendarDay from "./calendar-day.tsx";
 import TodayNav from "./today-nav.tsx";
 import EventEditor from "./event-editor.tsx";
+import type { CalendarEvents, DaysArray } from "#lib/my-utils";
 
-function CalendarView({
+function CalendarGridView({
   calendarEvents,
   setCalendarEvents,
   calendarView,
@@ -22,26 +22,47 @@ function CalendarView({
   selectedDate,
   setSelectedDate,
   daysArray,
-  setDaysArray
+  setDaysArray,
+}: {
+    calendarEvents: CalendarEvents;
+  /* @ts-ignore */
+  setCalendarEvents: Function;
+  /* @ts-ignore */
+  calendarView: CalendarView;
+  /* @ts-ignore */
+  setCalendarView: CalendarView;
+  /* @ts-ignore */
+  selectedDay: Date | any;
+  /* @ts-ignore */
+    setSelectedDay: Function;
+  /* @ts-ignore */
+  selectedDate: Date;
+  /* @ts-ignore */
+  setSelectedDate: Function;
+  daysArray: DaysArray;
+  /* @ts-ignore */
+  setDaysArray: Function;
 }) {
   const getFirstEventId = () => {
-    let temp = calendarEvents[0].id;
-    return temp;
-  }
+    const firstEventId: string = calendarEvents[0].id;
+    return firstEventId;
+  };
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [gridViewIndex, setGridViewIndex] = useState();
+  const [gridViewIndex, setGridViewIndex] = useState(0);
   const [activeEventId, setActiveEventId] = useState(getFirstEventId());
 
   const config = {
     weekdays: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
   };
 
-  const [editorMode, setEditorMode] = useState("edit");
-
+  const [editorMode /*, setEditorMode */] = useState("edit");
+  /* @ts-ignore */
   const openEditor = (editorMode, gridViewIndex, activeEventId) => {
     if (editorMode === "new") {
-      let newEventId = "event-" + (Math.random() + 1).toString(36).substring(7);
-      setCalendarEvents([
+      const newEventId =
+        "event-" + (Math.random() + 1).toString(36).substring(7);
+      /* @ts-ignore */
+      setCalendarEvents<CalendarEvents>([
         ...calendarEvents,
         {
           id: newEventId,
@@ -54,27 +75,30 @@ function CalendarView({
           timezone: "Europe/Stockholm",
           organizer: "",
           recurrence: "",
-          created_at: "",
-          updated_at: "",
+          createdOn: "",
+          updatedOn: "",
           startDate: new Date(selectedDate),
           endDate: addDays(selectedDate, 0.5),
+          createdBy: "",
+          attendees: "",
+          flair: "new",
         },
       ]);
-      activeEventId = newEventId;
+
       setActiveEventId(newEventId);
-      console.log("new,", calendarEvents);
+      console.log("NEW,", calendarEvents);
     }
-    // setActiveEventId(activeEventId);
 
     if (editorMode === "edit") {
       console.log("EDIT", activeEventId);
     }
 
     if (gridViewIndex !== null) {
+      console.log("GridviewIndex not null", gridViewIndex);
       setGridViewIndex(gridViewIndex);
       setDialogOpen(true);
     } else {
-      console.log("setting", activeEventId);
+      console.log("SETTING GridViewIndex null", activeEventId);
       setActiveEventId(activeEventId);
       setDialogOpen(true);
     }
@@ -85,15 +109,17 @@ function CalendarView({
       <TodayNav
         calendarView={calendarView}
         setCalendarView={setCalendarView}
+        /* @ts-ignore */
         daysArray={daysArray}
+        /* @ts-ignore */
         setDaysArray={setDaysArray}
       />
       <div className="plann8r w-full md:p-2 sm:p-0">
-        <Card className="w-full p-0 ring-0 md:ring-1 sm:ring-0 rounded-none md:rounded-sm :radius-sm">
+        <Card className="w-full p-0 ring-0 md:ring-1 sm:ring-0 rounded-none md:rounded-sm ">
           <CardContent className="p-0 md:p-0 sm:p-0">
-            <Dialog open={dialogOpen} onOpenChange={setDialogOpen} className="">
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogContent
-                className="bg-mist-50 dark:bg-accent rounded-sm ring-0 p-3 sm:p-4"
+                className="bg-mist-50 dark:bg-accent rounded-sm max-h-svh scroll-fade-y overflow-y-scroll overflow-x-clip ring-0 p-3 sm:p-4"
                 showCloseButton={false}
               >
                 <EventEditor
@@ -132,6 +158,8 @@ function CalendarView({
                       daysArray={daysArray}
                       week={week}
                       day={day}
+                      /* @ts-ignore */
+                      calendarView={calendarView}
                       calendarEvents={calendarEvents}
                       openEditor={openEditor}
                       selectedDay={selectedDay}
@@ -165,6 +193,7 @@ function CalendarView({
                             <ItemContent
                               className="flex-row"
                               onClick={(e) =>
+                                /* @ts-ignore */
                                 openEditor("edit", null, `${event.id}`) &&
                                 e.stopPropagation()
                               }
@@ -218,4 +247,4 @@ function CalendarView({
     </>
   );
 }
-export default CalendarView;
+export default CalendarGridView;

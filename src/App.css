@@ -773,3 +773,7 @@ div.p8-calendar-row:nth-of-type(6) {
 .date-picker-modal {
     top:150px;
 }
+
+.outside-month .p8-calendar-day-text {
+    opacity: 0.4;
+}

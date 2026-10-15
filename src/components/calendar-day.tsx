@@ -1,53 +1,45 @@
-"use client";
-
-import { useState } from "react";
 import HoverInfo from "./hover-info.tsx";
-import { eventsForDay } from "./events-for-day.tsx";
+import { cn } from "../lib/utils";
+import type { CalendarEvent } from "../types.ts";
 
-function CalendarDay({ daysArray, week, day, calendarEvents, openEditor, selectedDay, setSelectedDay, setSelectedDate }) {
-  const selectDay = (viewIndex, e) => {
-    console.log(e.target);
-    if (viewIndex === selectedDay) {
-      openEditor("new", viewIndex, "");
-    } else {
-      setSelectedDay(viewIndex);
-      setSelectedDate(daysArray[viewIndex]);
-    }
-    // alert(viewIndex);
-    //
-  };
+const MAX_TITLE_LENGTH = 32;
+
+type CalendarDayProps = {
+  day: Date;
+  inMonth: boolean;
+  isSelected: boolean;
+  events: CalendarEvent[];
+  onSelect: () => void;
+  onOpenEvent: (id: string) => void;
+};
+
+function CalendarDay({ day, inMonth, isSelected, events, onSelect, onOpenEvent }: CalendarDayProps) {
   return (
     <div
-      className={"p8-calendar-cell p8-flex-1-0-0 p8-calendar-day p8-ltr p8-calendar-day-labels p8-calendar-day-outer hover:bg-gray-50 " + ((week*7+day === selectedDay)? 'selected' : '')}
+      className={cn(
+        "p8-calendar-cell p8-flex-1-0-0 p8-calendar-day p8-ltr p8-calendar-day-labels p8-calendar-day-outer hover:bg-gray-50",
+        isSelected && "selected",
+        !inMonth && "outside-month",
+      )}
     >
-      <div
-        className="p8-calendar-cell-inner p8-calendar-day-inner "
-        onClick={(e) => selectDay(week * 7 + day, e)}
-      >
-        <div className="p8-calendar-cell-text p8-calendar-day-text ">
-          {daysArray[week * 7 + day].getDate()}
-        </div>
-        <div className="debug">
-          {daysArray[week * 7 + day].toISOString()}
-          <br />
-          gridIndex: {week * 7 + day}
-        </div>
+      <div className="p8-calendar-cell-inner p8-calendar-day-inner" onClick={onSelect}>
+        <div className="p8-calendar-cell-text p8-calendar-day-text">{day.getDate()}</div>
         <div className="event-wrapper">
-          {eventsForDay(week * 7 + day, daysArray, calendarEvents).map(
-            (event, i) => (
-              <div
-                key={event.id}
-                className={`p8-calendar-description ${event?.flair}`}
-                onClick={(e) =>
-                  e.stopPropagation() ||
-                  openEditor("edit", week * 7 + day, `${event.id}`)
-                }
-              ><HoverInfo day={daysArray[week * 7 + day]} event={event}></HoverInfo>
-                {event?.title.substring(0, 32)}{" "}{event.id}
-                {event?.title.length >= 32 && "..."}
-              </div>
-            ),
-          )}
+          {events.map((event) => (
+            <div
+              key={event.id}
+              className={cn("p8-calendar-description", event.flair)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenEvent(event.id);
+              }}
+            >
+              <HoverInfo day={day} event={event} />
+              {event.title.length > MAX_TITLE_LENGTH
+                ? `${event.title.substring(0, MAX_TITLE_LENGTH)}…`
+                : event.title}
+            </div>
+          ))}
         </div>
       </div>
       <div>

@@ -16,7 +16,6 @@ import getEvents from "./api/events.tsx";
 import "./App.css";
 import getDaysArray from "./components/get-days-array";
 
-// AIzaSyCfPTJZCZeRkIx5BT8K_0dE_6i75ndzMKc
 
 
 

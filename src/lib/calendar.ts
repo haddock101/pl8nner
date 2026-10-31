@@ -58,11 +58,12 @@ function newId(): string {
   return `event-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
-/** A blank one-hour event at 09:00 on `day`. */
-export function createEvent(day: Date): CalendarEvent {
+/** A blank, unsaved one-hour event at 09:00 on `day`. */
+export function createEvent(day: Date, calendarId?: number): CalendarEvent {
   const start = setHours(startOfDay(day), 9);
   return {
     id: newId(),
+    calendarId,
     title: "",
     description: "",
     location: "",

@@ -1,9 +1,10 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Button } from "./ui/button";
 import { Field, FieldLabel } from "./ui/field";
 import { Input } from "./ui/input";
 import DateRangePickerWithTime from "./date-range-picker-with-time.tsx";
-import type { CalendarEvent } from "../types.ts";
+import { getAttendees } from "../lib/shse-api.ts";
+import type { ApiCalendar, CalendarEvent } from "../types.ts";
 import EmojiPicker from "emoji-picker-react";
 
 import { FaceSlightlySmilingPlusIcon } from "lucide-react";
@@ -17,8 +18,9 @@ import { InputGroup } from "./ui/input-group.tsx";
 type EventEditorProps = {
   mode: "new" | "edit";
   event: CalendarEvent;
-  onSave: (event: CalendarEvent) => void;
-  onDelete: (id: string) => void;
+  calendars: ApiCalendar[];
+  onSave: (event: CalendarEvent) => Promise<void>;
+  onDelete: (event: CalendarEvent) => Promise<void>;
   onCancel: () => void;
 };
 
@@ -26,33 +28,70 @@ type EventEditorProps = {
  * Edits a copy of `event`; nothing reaches the calendar until Save.
  * Render with `key={event.id}` so the form resets when the event changes.
  */
-function EventEditor({ mode, event, onSave, onDelete, onCancel }: EventEditorProps) {
+function EventEditor({ mode, event, calendars, onSave, onDelete, onCancel }: EventEditorProps) {
   const [title, setTitle] = useState(event.title);
   const [description, setDescription] = useState(event.description);
   const [location, setLocation] = useState(event.location);
+  const [calendarId, setCalendarId] = useState(event.calendarId);
   const [start, setStart] = useState(() => new Date(event.startDate));
   const [end, setEnd] = useState(() => new Date(event.endDate));
-  const [attendees, setAttendees] = useState(event.attendees.join(", "));
+  // null while attendees load from the API
+  const [attendees, setAttendees] = useState<string | null>(
+    event.apiId === undefined ? event.attendees.join(", ") : null,
+  );
   const [flair, setFlair] = useState(event.flair ?? "");
-const [showPicker, setShowPicker] = useState(false);
+  const [showPicker, setShowPicker] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const isValidRange = end.getTime() >= start.getTime();
+  // An occurrence of a repeating event stays in its series' calendar
+  const isOccurrence = event.seriesId !== undefined;
+
+  useEffect(() => {
+    if (event.apiId === undefined) return;
+    let ignore = false;
+    getAttendees(event)
+      .then((emails) => !ignore && setAttendees(emails.join(", ")))
+      .catch((err) => {
+        if (ignore) return;
+        setAttendees("");
+        setError(`Could not load attendees: ${err.message}`);
+      });
+    return () => {
+      ignore = true;
+    };
+  }, [event]);
+
+  const run = async (action: () => Promise<void>) => {
+    setBusy(true);
+    setError(null);
+    try {
+      await action();
+    } catch (err) {
+      setError((err as Error).message);
+      setBusy(false);
+    }
+  };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!isValidRange) return;
-    onSave({
-      ...event,
-      title: title.trim() || "New Event",
-      description,
-      location,
-      startDate: start.toISOString(),
-      endDate: end.toISOString(),
-      attendees: attendees
-        .split(",")
-        .map((a) => a.trim())
-        .filter(Boolean),
-      flair: flair.trim() || undefined,
-    });
+    if (!isValidRange || attendees === null) return;
+    void run(() =>
+      onSave({
+        ...event,
+        calendarId,
+        title: title.trim() || "New Event",
+        description,
+        location,
+        startDate: start.toISOString(),
+        endDate: end.toISOString(),
+        attendees: attendees
+          .split(",")
+          .map((a) => a.trim())
+          .filter(Boolean),
+        flair: flair.trim() || undefined,
+      }),
+    );
   };
 
   const [viewport, setViewport] = useState<MapViewport>({
@@ -101,6 +140,27 @@ const [showPicker, setShowPicker] = useState(false);
             className="max-w-full rounded-sm m-t-2 top-2 text-xs"
             onEmojiClick={(emojiData) => setTitle(title + emojiData.emoji)}
           />
+        </Field>
+        <Field className="gap-0 mt-2">
+          <FieldLabel htmlFor="calendar">Calendar</FieldLabel>
+          <select
+            id="calendar"
+            name="calendar"
+            required
+            disabled={isOccurrence}
+            className="h-8 rounded-sm border border-input bg-input px-2 text-sm disabled:opacity-60"
+            value={calendarId ?? ""}
+            onChange={(e) => setCalendarId(Number(e.target.value))}
+          >
+            <option value="" disabled>
+              Pick a calendar
+            </option>
+            {calendars.map((calendar) => (
+              <option key={calendar.id} value={calendar.id}>
+                {calendar.name}
+              </option>
+            ))}
+          </select>
         </Field>
         <Field className="gap-0 mt-2">
           <FieldLabel htmlFor="description">Description</FieldLabel>
@@ -174,7 +234,9 @@ const [showPicker, setShowPicker] = useState(false);
             name="attendees"
             autoCapitalize="off"
             autoComplete="off"
-            value={attendees}
+            placeholder={attendees === null ? "Loading…" : "name@example.com"}
+            disabled={attendees === null}
+            value={attendees ?? ""}
             onChange={(e) => setAttendees(e.target.value)}
           />
         </Field>
@@ -191,14 +253,15 @@ const [showPicker, setShowPicker] = useState(false);
             onChange={(e) => setFlair(e.target.value)}
           />
         </Field>
+        {error && <p className="text-destructive text-xs mt-2">{error}</p>}
         <div className="flex-row">
           <Button
             size="lg"
             className="hover:cursor-pointer hover:bg-pink-500 w-full mt-4 text-fuchsia-50 font-extrabold rounded-sm bg-pink-300"
             type="submit"
-            disabled={!isValidRange}
+            disabled={!isValidRange || busy || attendees === null || calendarId === undefined}
           >
-            Save
+            {busy ? "Saving…" : "Save"}
           </Button>
           {mode === "edit" ? (
             <Button
@@ -206,7 +269,8 @@ const [showPicker, setShowPicker] = useState(false);
               size="lg"
               className="hover:cursor-pointer w-20 mt-4 font-extrabold rounded-sm"
               type="button"
-              onClick={() => onDelete(event.id)}
+              disabled={busy}
+              onClick={() => void run(() => onDelete(event))}
             >
               Delete
             </Button>

@@ -572,7 +572,7 @@ div.p8-calendar-row:nth-of-type(6) {
     margin-right: 0px;
     margin-left: -0.5px;
     background-color: rgba(140, 140, 140, 0.24);
-    font-size: 0.8em;
+    font-size: 0.25rem;
     font-weight: 600;
     padding: 0.1em 0.9em;
     border: 1px solid var(--color-background);

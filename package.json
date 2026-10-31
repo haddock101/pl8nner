@@ -1,23 +1,25 @@
 {
-  "name": "pl8nner",
+  "name": "plann8r",
   "private": true,
   "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite --host",
     "build": "tsc -b && vite build",
-    "buildpush": "tsc -b && vite build && npm run push",
+    "buildpush": "bun run build && bun run push",
     "lint": "eslint .",
+    "typecheck": "tsc -b",
     "preview": "vite preview",
+    "archive": "bash scripts/archive.sh",
+    "push": "rsync -avz --exclude-from='.rsync-exclude' dist/ shse.se@ssh.simply.com:/var/www/shse.se/plann8r/",
     "json-server": "npx json-server db.json5 -h http://192.168.1.11",
-    "devjson": "npm run json-server & npm run dev",
-    "push": "scp -r dist/* shse.se@ssh.simply.com:/var/www/shse.se/pl8nner"
-
+    "devjson": "npm run json-server & npm run dev"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
     "@fontsource-variable/geist": "^5.3.0",
     "@fontsource-variable/inter": "^5.3.0",
+    "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/vite": "^4.3.3",
     "@tanstack/react-table": "^9.2.4",
     "class-variance-authority": "^0.7.1",

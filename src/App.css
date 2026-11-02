@@ -551,7 +551,7 @@ div.p8-calendar-row:nth-of-type(6) {
 .p8-calendar-day-inner {
     border: 1px solid transparent;
     box-sizing: border-box;
-    height: 10em;
+    height: 3rem;
     padding: 0;
     position: relative;
     width: 100%;
@@ -572,11 +572,11 @@ div.p8-calendar-row:nth-of-type(6) {
     margin-right: 0px;
     margin-left: -0.5px;
     background-color: rgba(140, 140, 140, 0.24);
-    font-size: 0.8em;
+    font-size: 0.25rem;
     font-weight: 600;
     padding: 0.1em 0.9em;
-    border: 1px solid var(--color-background);
-    border-radius: 1.2em;
+    border: none;
+    border-radius: 0;
     overflow: hidden;
     white-space: normal;
     text-align: left;
@@ -584,6 +584,12 @@ div.p8-calendar-row:nth-of-type(6) {
     width: -webkit-fill-available;
     z-index: 100;
     max-height: 58%;
+    margin-left: -6px;
+    margin-right: -3px;
+    color: #fff;
+    font-weight: 800;
+    border: none;
+    border-radius: 0;
 }
 
 .p8-calendar-description.active {
@@ -653,7 +659,7 @@ div.p8-calendar-row:nth-of-type(6) {
 }
 
 .p8-calendar-day-labels .p8-calendar-day-inner {
-    min-height: 4.75em;
+    min-height: 2.75em;
     text-align: right;
 }
 

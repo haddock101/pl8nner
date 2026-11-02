@@ -1,15 +1,15 @@
-import { useState, type Dispatch, type SetStateAction } from "react";
+import { useState } from "react";
 import { format, isSameDay, isSameMonth, startOfDay, startOfMonth } from "date-fns";
 
-import { Card, CardContent } from "./ui/card";
-import { Dialog, DialogContent } from "./ui/dialog";
-import { Item, ItemContent, ItemDescription, ItemTitle } from "./ui/item";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import { Card, CardContent } from "./ui/card.tsx";
+import { Dialog, DialogContent } from "./ui/dialog.tsx";
+import { Item, ItemContent, ItemDescription, ItemTitle } from "./ui/item.tsx";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs.tsx";
 import CalendarDay from "./calendar-day.tsx";
 import TodayNav from "./today-nav.tsx";
 import EventEditor from "./event-editor.tsx";
 import { createEvent, eventsForDay, getMonthGrid, toWeeks } from "../lib/calendar.ts";
-import type { CalendarEvent } from "../types.ts";
+import type { ApiCalendar, CalendarEvent } from "../types.ts";
 
 const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
@@ -17,7 +17,10 @@ type EditorState = { mode: "new" | "edit"; event: CalendarEvent } | null;
 
 type CalendarViewProps = {
   calendarEvents: CalendarEvent[];
-  setCalendarEvents: Dispatch<SetStateAction<CalendarEvent[]>>;
+  calendars: ApiCalendar[];
+  loading: boolean;
+  onSaveEvent: (event: CalendarEvent) => Promise<void>;
+  onDeleteEvent: (event: CalendarEvent) => Promise<void>;
   viewMonth: Date;
   setViewMonth: (month: Date) => void;
   selectedDate: Date;
@@ -26,24 +29,26 @@ type CalendarViewProps = {
 
 function CalendarView({
   calendarEvents,
-  setCalendarEvents,
+  calendars,
+  loading,
+  onSaveEvent,
+  onDeleteEvent,
   viewMonth,
   setViewMonth,
   selectedDate,
   setSelectedDate,
 }: CalendarViewProps) {
   const [editor, setEditor] = useState<EditorState>(null);
-
   const weeks = toWeeks(getMonthGrid(viewMonth));
-
   const sortedEvents = [...calendarEvents].sort(
     (a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
   );
+  const defaultCalendar = calendars.find((c) => c.is_default) ?? calendars[0];
 
   // Clicking a day selects it; clicking the selected day again starts a new event.
   const handleDayClick = (day: Date) => {
     if (isSameDay(day, selectedDate)) {
-      setEditor({ mode: "new", event: createEvent(day) });
+      setEditor({ mode: "new", event: createEvent(day, defaultCalendar?.id) });
     } else {
       setSelectedDate(day);
     }
@@ -60,26 +65,27 @@ function CalendarView({
     setSelectedDate(startOfDay(today));
   };
 
-  // A new event is only added to the list when it is saved, so cancelling
-  // the dialog leaves nothing behind.
-  const saveEvent = (saved: CalendarEvent) => {
-    setCalendarEvents((events) =>
-      events.some((e) => e.id === saved.id)
-        ? events.map((e) => (e.id === saved.id ? saved : e))
-        : [...events, saved],
-    );
+  // A new event is only sent to the API when it is saved, so cancelling
+  // the dialog leaves nothing behind. Errors are shown by the editor.
+  const saveEvent = async (saved: CalendarEvent) => {
+    await onSaveEvent(saved);
     setEditor(null);
   };
 
-  const deleteEvent = (id: string) => {
-    setCalendarEvents((events) => events.filter((e) => e.id !== id));
+  const deleteEvent = async (event: CalendarEvent) => {
+    await onDeleteEvent(event);
     setEditor(null);
   };
 
   return (
     <>
       <TodayNav viewMonth={viewMonth} setViewMonth={setViewMonth} onToday={goToday} />
-      <div className="plann8r w-full md:p-2 sm:p-0">
+      <div className="plann8r w-full md:p-2 sm:p-0" aria-busy={loading}>
+
+
+
+
+
         <Card className="w-full p-0 ring-0 md:ring-1 sm:ring-0 rounded-none md:rounded-sm">
           <CardContent className="p-0 md:p-0 sm:p-0">
             <Dialog
@@ -89,7 +95,7 @@ function CalendarView({
               }}
             >
               <DialogContent
-                className="bg-mist-50 dark:bg-accent rounded-sm ring-0 p-3 sm:p-4"
+                className="bg-mist-50 dark:bg-accent rounded-sm max-h-svh scroll-fade-y overflow-y-scroll overflow-x-clip ring-0 p-3 sm:p-4"
                 showCloseButton={false}
               >
                 {editor && (
@@ -98,6 +104,7 @@ function CalendarView({
                     key={editor.event.id}
                     mode={editor.mode}
                     event={editor.event}
+                    calendars={calendars}
                     onSave={saveEvent}
                     onDelete={deleteEvent}
                     onCancel={() => setEditor(null)}

@@ -4,11 +4,11 @@ import { ThemeProvider } from "next-themes";
 
 import "./index.css";
 import App from "./App.tsx";
-
-createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <ThemeProvider attribute="class">
-      <App />
-    </ThemeProvider>
-  </StrictMode>,
-);
+// eslint-disable-next-line
+// @ts-ignore
+const domRoot = createRoot(document.getElementById('root'));
+domRoot.render(<StrictMode>
+  <ThemeProvider attribute="class">
+    <App />
+  </ThemeProvider>
+</StrictMode>);

@@ -141,27 +141,30 @@ function EventEditor({ mode, event, calendars, onSave, onDelete, onCancel }: Eve
             onEmojiClick={(emojiData) => setTitle(title + emojiData.emoji)}
           />
         </Field>
-        <Field className="gap-0 mt-2">
-          <FieldLabel htmlFor="calendar">Calendar</FieldLabel>
-          <select
-            id="calendar"
-            name="calendar"
-            required
-            disabled={isOccurrence}
-            className="h-8 rounded-sm border border-input bg-input px-2 text-sm disabled:opacity-60"
-            value={calendarId ?? ""}
-            onChange={(e) => setCalendarId(Number(e.target.value))}
-          >
-            <option value="" disabled>
-              Pick a calendar
-            </option>
-            {calendars.map((calendar) => (
-              <option key={calendar.id} value={calendar.id}>
-                {calendar.name}
+        {/* With a single calendar there is nothing to choose; new events get it by default */}
+        {calendars.length > 1 && (
+          <Field className="gap-0 mt-2">
+            <FieldLabel htmlFor="calendar">Calendar</FieldLabel>
+            <select
+              id="calendar"
+              name="calendar"
+              required
+              disabled={isOccurrence}
+              className="h-8 rounded-sm border border-input bg-input px-2 text-sm disabled:opacity-60"
+              value={calendarId ?? ""}
+              onChange={(e) => setCalendarId(Number(e.target.value))}
+            >
+              <option value="" disabled>
+                Pick a calendar
               </option>
-            ))}
-          </select>
-        </Field>
+              {calendars.map((calendar) => (
+                <option key={calendar.id} value={calendar.id}>
+                  {calendar.name}
+                </option>
+              ))}
+            </select>
+          </Field>
+        )}
         <Field className="gap-0 mt-2">
           <FieldLabel htmlFor="description">Description</FieldLabel>
           <Input

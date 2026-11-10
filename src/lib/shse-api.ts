@@ -84,6 +84,33 @@ export async function register(email: string, password: string): Promise<ApiUser
   return session.user;
 }
 
+/**
+ * Asks the API to email a reset link. The link opens this page with #reset=<token>.
+ * Succeeds whether or not the email has an account.
+ */
+export async function requestPasswordReset(email: string): Promise<void> {
+  const resetUrl = `${location.origin}${location.pathname}`;
+  await request("POST", "/auth/forgot-password", { email, reset_url: resetUrl });
+}
+
+/** The token from a reset link (#reset=<token>), if this page was opened from one. */
+export function resetTokenFromUrl(): string | null {
+  const match = /(?:^#|&)reset=([0-9a-f]{64})(?:&|$)/i.exec(location.hash);
+  return match ? match[1] : null;
+}
+
+/** Removes #reset=... so a reload or bookmark doesn't reuse the link. */
+export function clearResetTokenFromUrl() {
+  history.replaceState(null, "", location.pathname + location.search);
+}
+
+/** Sets a new password with the token from the emailed link, and signs in. */
+export async function resetPassword(token: string, newPassword: string): Promise<ApiUser> {
+  const session = await request<Session>("POST", "/auth/reset-password", { token, new_password: newPassword });
+  setToken(session.token);
+  return session.user;
+}
+
 export async function logout(): Promise<void> {
   try {
     await request("POST", "/auth/logout");

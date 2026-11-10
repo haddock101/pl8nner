@@ -64,16 +64,4 @@ export default defineConfig({
       "@": path.resolve(import.meta.dirname, "./src"),
     },
   },
-  server: {
-    port: 5173,
-    cors: true,
-    proxy: {
-      "/api": {
-        target: "http://127.0.0.1:5555",
-        changeOrigin: true,
-        secure: false,
-        rewrite: (path) => path.replace(/^\/api/, ""),
-      },
-    },
-  },
 });
